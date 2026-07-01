@@ -211,7 +211,11 @@ function populateFilters(){
   stateSel.innerHTML = '<option value="ALL">All States</option>' + allStates.map(s=>`<option value="${s}">${STATE_NAMES[s]||s} (${s})</option>`).join('');
 
   const cotSel = document.getElementById('cotFilter');
-  const allCots = Array.from(new Set(DATA.universe.cots)).sort();
+  // Build from the actual (already Off-Premise / non-Independent filtered) tuples, not the raw
+  // DATA.universe.cots list — that field is precomputed from the full unfiltered universe file
+  // and still includes On-Premise-only classes of trade (BAR, RESTAURANT, HOTEL/MOTEL, etc.)
+  // that have zero rows once this dashboard's scope restriction is applied.
+  const allCots = Array.from(new Set(DATA.universe.tuples.map(t => t[2]))).sort();
   cotSel.innerHTML = '<option value="ALL">All Classes of Trade</option>' + allCots.map(c=>`<option value="${c}">${c}</option>`).join('');
 }
 
